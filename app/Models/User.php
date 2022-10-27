@@ -20,8 +20,19 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'location',
+        'image',
         'password',
     ];
+
+    public function games()
+    {
+        return $this->hasMany(Game::class);
+    }
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
