@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class WishListController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Category::all();
+        return Wishlist::all();
     }
 
     /**
@@ -26,15 +26,16 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'name' => 'required|string|unique:categories,name'
+            'game_id' => 'required'
         ]);
-        $category = Category::create([
-            'name' => $fields['name']
+        $userID = auth()->user()->id;
+        $wishlist = Wishlist::create([
+            'game_id' => $fields['game_id'],
+            'user_id' => $userID
         ]);
-
         return [
-            'message' => 'category added',
-            'category' => $category
+            'message' => 'game added to wishlist',
+            'list' => $wishlist
         ];
     }
 
@@ -46,7 +47,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $item = Wishlist::find($id);
+        return $item;
     }
 
     /**
@@ -69,11 +71,12 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category = Category::find($id);
-        $response = $category->delete();
+        $item = Wishlist::find($id);
+        $response = $item->delete();
+
         if ($response == 1) {
             return [
-                'message' => 'category deleted'
+                'message' => 'game removed from wishlist'
             ];
         } else {
             return [

@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WishListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/games', [GameController::class, 'index']);
     Route::post('/games', [GameController::class, 'store']);
     Route::post('/categories', [CategoryController::class, 'store']);
-    Route::get('/games/{id}',[GameController::class,'show']);
-    Route::put('/games/{id}',[GameController::class,'update']);
+    Route::get('/games/{id}', [GameController::class, 'show']);
+    Route::put('/games/{id}', [GameController::class, 'update']);
+    Route::delete('/games/{id}', [GameController::class, 'destroy']);
+    Route::post('/users/delete_account', [UserController::class, 'destroy']);
+    Route::post('/wishlist', [WishListController::class, 'store']);
+    Route::get('/wishlist', [WishListController::class, 'index']);
+    Route::get('/wishlist/{id}', [WishListController::class, 'show']);
+    Route::delete('/wishlist/{id}', [WishListController::class, 'destroy']);
 });

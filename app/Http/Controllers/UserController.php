@@ -52,4 +52,20 @@ class UserController extends Controller
             'token' => $token,
         ];
     }
+    public function destroy(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $response = $user->delete();
+        $request->user()->currentAccessToken()->delete();
+
+        if ($response == 1) {
+            return [
+                'message' => 'account deleted',
+            ];
+        } else {
+            return [
+                'message' => 'NOT DELETED'
+            ];
+        }
+    }
 }

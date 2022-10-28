@@ -120,6 +120,16 @@ class GameController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $game = Game::find($id);
+        $response = $game->delete();
+        if ($response == 1) {
+            return [
+                'message' => 'game deleted',
+            ];
+        } else {
+            return [
+                'message' => 'NOT DELETED'
+            ];
+        }
     }
 }
