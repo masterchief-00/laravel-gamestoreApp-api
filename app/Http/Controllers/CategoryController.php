@@ -32,9 +32,11 @@ class CategoryController extends Controller
             'name' => $fields['name']
         ]);
 
+        $categories = Category::all();
+
         return [
             'message' => 'category added',
-            'category' => $category
+            'categories' => $categories
         ];
     }
 

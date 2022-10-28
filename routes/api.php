@@ -26,9 +26,12 @@ Route::post('/users/signup', [UserController::class, 'signup']);
 Route::post('/users/login', [UserController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/users/logout', [UserController::class, 'logout']);
+    Route::put('/users/{email}',[UserController::class,'update']);
     Route::get('/games', [GameController::class, 'index']);
     Route::post('/games', [GameController::class, 'store']);
     Route::post('/categories', [CategoryController::class, 'store']);
+    Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/games/{id}', [GameController::class, 'show']);
     Route::put('/games/{id}', [GameController::class, 'update']);
     Route::delete('/games/{id}', [GameController::class, 'destroy']);
