@@ -29,11 +29,11 @@ class GameController extends Controller
         $fields = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
-            'downloads' => 'required|integer',
-            'rating' => 'required|integer',
-            'category_id' => 'required|integer',
-            'image_wide' => 'required|image|mimes:jpeg,png,jpg',
-            'image_tall' => 'required|image|mimes:jpeg,png,jpg',
+            'downloads' => 'required',
+            'rating' => 'required',
+            'category_id' => 'required',
+            'image_wide' => 'nullable',
+            'image_tall' => 'nullable',
         ]);
 
         $game = new Game();
@@ -43,11 +43,13 @@ class GameController extends Controller
         $game->category_id = $fields['category_id'];
         $game->rating = $fields['rating'];
 
-        $tmp__img_wide_url = Cloudinary::upload($fields['image_wide']->getRealPath())->getSecurePath();
-        $tmp__img_tall_url = Cloudinary::upload($fields['image_tall']->getRealPath())->getSecurePath();
+        if ($fields['image_wide'] !== null && $fields['image_tall'] !== null) {
+            $tmp__img_wide_url = Cloudinary::upload($fields['image_wide']->getRealPath())->getSecurePath();
+            $tmp__img_tall_url = Cloudinary::upload($fields['image_tall']->getRealPath())->getSecurePath();
 
-        $game->image_wide = $tmp__img_wide_url;
-        $game->image_tall = $tmp__img_tall_url;
+            $game->image_wide = $tmp__img_wide_url;
+            $game->image_tall = $tmp__img_tall_url;
+        }
 
         $game->user_id = auth()->user()->id;
 
@@ -59,6 +61,54 @@ class GameController extends Controller
         ];
     }
 
+    public function store_image_wide(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'image_wide' => 'required',
+        ]);
+
+        $game = Game::find($id);
+
+        if ($fields['image_wide']) {
+            $tmp__img_wide_url = Cloudinary::upload($fields['image_wide']->getRealPath())->getSecurePath();
+            $game->image_wide = $tmp__img_wide_url;
+            $game->update();
+
+            return [
+                'message'=>'image wide uploaded!',                
+            ];
+        }
+        else
+        {
+            return [
+                'message'=>'error uploading wide image'
+            ];
+        }
+    }
+    public function store_image_tall(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'image_tall' => 'required',
+        ]);
+
+        $game = Game::find($id);
+
+        if ($fields['image_tall']) {
+            $tmp__img_tall_url = Cloudinary::upload($fields['image_tall']->getRealPath())->getSecurePath();
+            $game->image_tall = $tmp__img_tall_url;
+            $game->update();
+
+            return [
+                'message'=>'image tall uploaded!',                
+            ];
+        }
+        else
+        {
+            return [
+                'message'=>'error uploading tall image'
+            ];
+        }
+    }
     /**
      * Display the specified resource.
      *

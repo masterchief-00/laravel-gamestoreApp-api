@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
 
 class UserController extends Controller
 {
@@ -104,7 +106,7 @@ class UserController extends Controller
         if ($user) {
             $user->name = $fields['name'];
             $user->location = $fields['location'];
-            $user->about=$fields['about'];
+            $user->about = $fields['about'];
             $user->update();
 
 
@@ -139,7 +141,49 @@ class UserController extends Controller
         }
     }
 
+    public function update_image(Request $request, $email)
+    {
+        $fields = $request->validate([
+            'image' => 'required',
+        ]);
 
+        $user = User::where('email', $email)->first();
+
+        if ($fields['image']) {
+            $tmp__avatar_url = Cloudinary::upload($fields['image']->getRealPath())->getSecurePath();
+            $user->image = $tmp__avatar_url;
+            $user->update();
+
+            $token = $user->createToken('gamestoreapp')->plainTextToken;
+
+            $OnWishlist = Wishlist::find($user->id);
+            if ($OnWishlist) {
+                $ItemsOnWishlist = $OnWishlist->count();
+            } else {
+                $ItemsOnWishlist = 0;
+            }
+
+            $games = Game::where('user_id', $user->id);
+            if ($games) {
+                $allGames = $games->count();
+            } else {
+                $allGames = 0;
+            }
+
+            return [
+                'message' => 'avatar uploaded!',
+                'user' => $user,
+                'joinDate' => $user->created_at->diffForHumans(),
+                'wishlist' => $ItemsOnWishlist,
+                'games' => $allGames,
+                'token' => $token,
+            ];
+        } else {
+            return [
+                'message' => 'error avatar image'
+            ];
+        }
+    }
 
     public function logout(Request $request)
     {
