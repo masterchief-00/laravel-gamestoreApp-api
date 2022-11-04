@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Game;
 use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -16,17 +17,32 @@ class GameController extends Controller
      */
     public function index()
     {
-        return Game::all();
+        $games_by_date = Game::orderBy('created_at', 'ASC')->get();
+        $games_by_rating = Game::where('rating', '>=', 4)->orderByDesc('rating')->get();
+        $games_by_downloads = Game::orderBy('downloads', 'DESC')->get();
+        $categories = Category::all();
+
+        return [
+            'new_games' => $games_by_date,
+            'top_games' => $games_by_rating,
+            'most_downloaded' => $games_by_downloads,
+            'categories' => $categories
+        ];
     }
 
+    /**
+     * return all games according to the logged in user
+     */
     public function user_games($email)
     {
         $user = User::where('email', $email)->first();
         $games = Game::where('user_id', $user->id)->get();
+        $categories = Category::all();
 
         if ($games) {
             return [
-                'games' => $games
+                'games' => $games,
+                'categories' => $categories
             ];
         } else {
             return [
@@ -77,6 +93,9 @@ class GameController extends Controller
         ];
     }
 
+    /**
+     * store wide image
+     */
     public function store_image_wide(Request $request, $id)
     {
         $fields = $request->validate([
@@ -99,6 +118,10 @@ class GameController extends Controller
             ];
         }
     }
+
+    /**
+     * store tall image
+     */
     public function store_image_tall(Request $request, $id)
     {
         $fields = $request->validate([
@@ -122,14 +145,24 @@ class GameController extends Controller
         }
     }
     /**
-     * Display the specified resource.
+     * Display the specified game by category.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return Game::find($id);
+        $games = Game::where('category_id', $id)->get();
+
+        if ($games) {
+            return [
+                'category_search_result' => $games
+            ];
+        } else {
+            return [
+                'category_search_result' => null
+            ];
+        }
     }
 
     /**

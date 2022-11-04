@@ -36,7 +36,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/games/images/tall/{id}', [GameController::class, 'store_image_tall']);
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::get('/categories', [CategoryController::class, 'index']);
-    Route::get('/games/{id}', [GameController::class, 'show']);
+    Route::get('/games/search/{id}', [GameController::class, 'show']);
     Route::put('/games/{id}', [GameController::class, 'update']);
     Route::delete('/games/{id}', [GameController::class, 'destroy']);
     Route::post('/users/delete_account', [UserController::class, 'destroy']);
