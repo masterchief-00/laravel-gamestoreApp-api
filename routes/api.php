@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/users/{email}', [UserController::class, 'update']);
     Route::put('/users/avatar/{email}', [UserController::class, 'update_image']);
     Route::get('/games', [GameController::class, 'index']);
+    Route::get('/games/{email}', [GameController::class, 'user_games']);
     Route::post('/games', [GameController::class, 'store']);
     Route::put('/games/images/wide/{id}', [GameController::class, 'store_image_wide']);
     Route::put('/games/images/tall/{id}', [GameController::class, 'store_image_tall']);

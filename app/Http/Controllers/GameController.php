@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,21 @@ class GameController extends Controller
         return Game::all();
     }
 
+    public function user_games($email)
+    {
+        $user = User::where('email', $email)->first();
+        $games = Game::where('user_id', $user->id)->get();
+
+        if ($games) {
+            return [
+                'games' => $games
+            ];
+        } else {
+            return [
+                'games' => null
+            ];
+        }
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -75,13 +91,11 @@ class GameController extends Controller
             $game->update();
 
             return [
-                'message'=>'image wide uploaded!',                
+                'message' => 'image wide uploaded!',
             ];
-        }
-        else
-        {
+        } else {
             return [
-                'message'=>'error uploading wide image'
+                'message' => 'error uploading wide image'
             ];
         }
     }
@@ -99,13 +113,11 @@ class GameController extends Controller
             $game->update();
 
             return [
-                'message'=>'image tall uploaded!',                
+                'message' => 'image tall uploaded!',
             ];
-        }
-        else
-        {
+        } else {
             return [
-                'message'=>'error uploading tall image'
+                'message' => 'error uploading tall image'
             ];
         }
     }
