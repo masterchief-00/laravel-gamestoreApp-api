@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game;
+use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 
@@ -33,9 +35,13 @@ class WishListController extends Controller
             'game_id' => $fields['game_id'],
             'user_id' => $userID
         ]);
+
+        $game = Game::find($fields['game_id']);
+        $game->isOnWishlist = true;
+
+        $game->update();
         return [
             'message' => 'game added to wishlist',
-            'list' => $wishlist
         ];
     }
 
@@ -71,8 +77,12 @@ class WishListController extends Controller
      */
     public function destroy($id)
     {
-        $item = Wishlist::find($id);
+        $item = Wishlist::where('game_id', $id);
         $response = $item->delete();
+
+        $game = Game::find($id);
+        $game->isOnWishlist = false;
+        $game->update();
 
         if ($response == 1) {
             return [

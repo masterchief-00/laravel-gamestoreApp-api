@@ -48,6 +48,7 @@ class UserController extends Controller
             'user' => $user,
             'joinDate' => $user->created_at->diffForHumans(),
             'wishlist' => $ItemsOnWishlist,
+            'wishlist_games' => $OnWishlist,
             'games' => $allGames,
             'token' => $token
         ];
@@ -68,7 +69,7 @@ class UserController extends Controller
         }
         $token = $user->createToken('gamestoreapp')->plainTextToken;
 
-        $OnWishlist = Wishlist::find($user->id);
+        $OnWishlist = Wishlist::where('user_id', $user->id)->get();
         if ($OnWishlist) {
             $ItemsOnWishlist = $OnWishlist->count();
         } else {
@@ -87,6 +88,7 @@ class UserController extends Controller
             'user' => $user,
             'joinDate' => $user->created_at->diffForHumans(),
             'wishlist' => $ItemsOnWishlist,
+            'wishlist_games' => $OnWishlist,
             'games' => $allGames,
             'token' => $token,
         ];
@@ -112,7 +114,7 @@ class UserController extends Controller
 
             $token = $user->createToken('gamestoreapp')->plainTextToken;
 
-            $OnWishlist = Wishlist::find($user->id);
+            $OnWishlist = Wishlist::where('user_id', $user->id);
             if ($OnWishlist) {
                 $ItemsOnWishlist = $OnWishlist->count();
             } else {
@@ -131,6 +133,7 @@ class UserController extends Controller
                 'user' => $user,
                 'joinDate' => $user->created_at->diffForHumans(),
                 'wishlist' => $ItemsOnWishlist,
+                'wishlist_games' => $OnWishlist,
                 'games' => $allGames,
                 'token' => $token,
             ];
@@ -156,7 +159,7 @@ class UserController extends Controller
 
             $token = $user->createToken('gamestoreapp')->plainTextToken;
 
-            $OnWishlist = Wishlist::find($user->id);
+            $OnWishlist = Wishlist::where('user_id', $user->id);
             if ($OnWishlist) {
                 $ItemsOnWishlist = $OnWishlist->count();
             } else {
@@ -175,6 +178,7 @@ class UserController extends Controller
                 'user' => $user,
                 'joinDate' => $user->created_at->diffForHumans(),
                 'wishlist' => $ItemsOnWishlist,
+                'wishlist_games' => $OnWishlist,
                 'games' => $allGames,
                 'token' => $token,
             ];
