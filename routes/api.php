@@ -44,4 +44,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/wishlist', [WishListController::class, 'index']);
     Route::get('/wishlist/{id}', [WishListController::class, 'show']);
     Route::delete('/wishlist/{id}', [WishListController::class, 'destroy']);
+
+    Route::get('/search/{query}', [GameController::class, 'super_search']);
 });

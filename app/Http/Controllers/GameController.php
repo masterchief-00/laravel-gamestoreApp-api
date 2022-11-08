@@ -165,6 +165,32 @@ class GameController extends Controller
         }
     }
 
+    public function super_search($query)
+    {
+        $results = Game::where('title', 'like', '%' . $query . '%')
+            ->orWhere('description', 'like', '%' . $query . '%')
+            ->orWhereHas('category', function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%');
+            })
+            ->get();
+        $categories = Category::all();
+
+
+        if ($results) {
+            return [
+                'message' => 'there is a match!',
+                'results' => $results,
+                'categories'=>$categories
+            ];
+        } else {
+            return [
+                'message' => 'nothing!',
+                'results' => null,
+                'categories'=>null
+            ];
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
