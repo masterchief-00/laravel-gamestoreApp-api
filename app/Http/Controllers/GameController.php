@@ -169,6 +169,7 @@ class GameController extends Controller
     {
         $results = Game::where('title', 'like', '%' . $query . '%')
             ->orWhere('description', 'like', '%' . $query . '%')
+            ->orWhere('category_id', 'like', '%' . $query . '%')
             ->orWhereHas('category', function ($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%');
             })
@@ -180,13 +181,13 @@ class GameController extends Controller
             return [
                 'message' => 'there is a match!',
                 'results' => $results,
-                'categories'=>$categories
+                'categories' => $categories
             ];
         } else {
             return [
                 'message' => 'nothing!',
                 'results' => null,
-                'categories'=>null
+                'categories' => null
             ];
         }
     }

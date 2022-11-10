@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Game;
 use App\Models\User;
 use App\Models\Wishlist;
@@ -40,8 +41,36 @@ class WishListController extends Controller
         $game->isOnWishlist = true;
 
         $game->update();
+
+        $games_all = Game::all();
+        $games_by_date = Game::orderBy('created_at', 'ASC')->get();
+        $games_by_rating = Game::where('rating', '>=', 4)->orderByDesc('rating')->get();
+        $games_by_downloads = Game::orderBy('downloads', 'DESC')->get();
+        $categories = Category::all();
+
+        $OnWishlist = Wishlist::where('user_id', auth()->user()->id)->get();
+        if ($OnWishlist) {
+            $ItemsOnWishlist = $OnWishlist->count();
+        } else {
+            $ItemsOnWishlist = 0;
+        }
+
+        $games = Game::where('user_id', auth()->user()->id);
+        if ($games) {
+            $allGames = $games->count();
+        } else {
+            $allGames = 0;
+        }
+
         return [
             'message' => 'game added to wishlist',
+            'new_games' => $games_by_date,
+            'top_games' => $games_by_rating,
+            'most_downloaded' => $games_by_downloads,
+            'user_games' => $games_all,
+            'wishlist' => $ItemsOnWishlist,
+            'games_count' => $allGames,
+            'categories' => $categories,
         ];
     }
 
@@ -84,13 +113,47 @@ class WishListController extends Controller
         $game->isOnWishlist = false;
         $game->update();
 
+        $games_all = Game::all();
+        $games_by_date = Game::orderBy('created_at', 'ASC')->get();
+        $games_by_rating = Game::where('rating', '>=', 4)->orderByDesc('rating')->get();
+        $games_by_downloads = Game::orderBy('downloads', 'DESC')->get();
+        $categories = Category::all();
+
+        $OnWishlist = Wishlist::where('user_id', auth()->user()->id)->get();
+        if ($OnWishlist) {
+            $ItemsOnWishlist = $OnWishlist->count();
+        } else {
+            $ItemsOnWishlist = 0;
+        }
+
+        $games = Game::where('user_id', auth()->user()->id);
+        if ($games) {
+            $allGames = $games->count();
+        } else {
+            $allGames = 0;
+        }
+
         if ($response == 1) {
             return [
-                'message' => 'game removed from wishlist'
+                'message' => 'game removed from wishlist',
+                'new_games' => $games_by_date,
+                'top_games' => $games_by_rating,
+                'most_downloaded' => $games_by_downloads,
+                'user_games' => $games_all,
+                'wishlist' => $ItemsOnWishlist,
+                'games_count' => $allGames,
+                'categories' => $categories,
             ];
         } else {
             return [
-                'message' => 'NOT DELETED'
+                'message' => 'NOT DELETED',
+                'new_games' => null,
+                'top_games' => null,
+                'most_downloaded' => null,
+                'user_games' => null,
+                'wishlist' => null,
+                'games_count' => null,
+                'categories' => null,
             ];
         }
     }
